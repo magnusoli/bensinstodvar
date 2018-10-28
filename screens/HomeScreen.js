@@ -1,16 +1,12 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-} from "react-native";
-import MapView from "react-native-maps";
+import { StyleSheet, View, Dimensions, ActivityIndicator } from "react-native";
+import MapView, { Marker } from "react-native-maps";
 
 const { width, height } = Dimensions.get("window");
 const SCREEN_HEIGHT = height;
 const SCREEN_WIDTH = width;
 const ASPECT_RATIO = width / height;
-const LATTITUDE_DELTA = 0.1;
+const LATTITUDE_DELTA = 0.08;
 const LONGTITUDE_DELTA = LATTITUDE_DELTA * ASPECT_RATIO;
 export default class HomeScreen extends React.Component {
   constructor(props) {
@@ -21,17 +17,48 @@ export default class HomeScreen extends React.Component {
         longitude: -21.827774,
         latitudeDelta: LATTITUDE_DELTA,
         longitudeDelta: LONGTITUDE_DELTA
-      }
+      },
+      isLoading: true
     };
+  }
+  componentDidMount() {
+    return fetch("http://apis.is/petrol")
+      .then(response => response.json())
+      .then(responseJson => {
+        this.setState(
+          {
+            isLoading: false,
+            dataSource: responseJson.results
+          },
+          function() {}
+        );
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 
   render() {
+    if (this.state.isLoading) {
+      return (
+        <View style={{ flex: 1, padding: 20 }}>
+          <ActivityIndicator />
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          initialRegion={this.state.initialPosition}
-        />
+        <MapView style={styles.map} initialRegion={this.state.initialPosition}>
+          {this.state.dataSource.map(marker => (
+            <MapView.Marker
+              coordinate={{
+                latitude: marker.geo.lat,
+                longitude: marker.geo.lon
+              }}
+              title={marker.company + ", " + marker.name}
+            />
+          ))}
+        </MapView>
       </View>
     );
   }
