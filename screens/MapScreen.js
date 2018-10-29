@@ -8,20 +8,36 @@ const SCREEN_WIDTH = width;
 const ASPECT_RATIO = width / height;
 const LATTITUDE_DELTA = 0.08;
 const LONGTITUDE_DELTA = LATTITUDE_DELTA * ASPECT_RATIO;
-export default class HomeScreen extends React.Component {
+export default class MapScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       initialPosition: {
-        latitude: 64.128288,
-        longitude: -21.827774,
+        latitude: null,
+        longitude: null,
         latitudeDelta: LATTITUDE_DELTA,
         longitudeDelta: LONGTITUDE_DELTA
       },
-      isLoading: true
+      isLoading: true,
+      isLoading2: true
     };
   }
   componentDidMount() {
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        this.setState({
+          initialPosition: {
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+            latitudeDelta: LATTITUDE_DELTA,
+            longitudeDelta: LONGTITUDE_DELTA
+          },
+          isLoading2: false
+        });
+      },
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+
     return fetch("http://apis.is/petrol")
       .then(response => response.json())
       .then(responseJson => {
@@ -37,11 +53,10 @@ export default class HomeScreen extends React.Component {
         console.error(error);
       });
   }
-
   render() {
-    if (this.state.isLoading) {
+    if (this.state.isLoading || this.state.isLoading2) {
       return (
-        <View style={{ flex: 1, padding: 20 }}>
+        <View style={{ flex: 1, padding: 20, alignContent: "center" }}>
           <ActivityIndicator />
         </View>
       );
@@ -51,6 +66,7 @@ export default class HomeScreen extends React.Component {
         <MapView style={styles.map} initialRegion={this.state.initialPosition}>
           {this.state.dataSource.map(marker => (
             <MapView.Marker
+              key={marker.key}
               coordinate={{
                 latitude: marker.geo.lat,
                 longitude: marker.geo.lon
@@ -58,6 +74,17 @@ export default class HomeScreen extends React.Component {
               title={marker.company + ", " + marker.name}
             />
           ))}
+          <MapView.Marker
+            coordinate={{
+              latitude: this.state.initialPosition.latitude,
+              longitude: this.state.initialPosition.longitude
+            }}
+            title={"Your Location"}
+          >
+            <View style={styles.radius}>
+              <View style={styles.marker} />
+            </View>
+          </MapView.Marker>
         </MapView>
       </View>
     );
@@ -66,9 +93,9 @@ export default class HomeScreen extends React.Component {
 
 const styles = StyleSheet.create({
   radius: {
-    height: 50,
-    width: 50,
-    borderRadius: 50 / 2,
+    height: 30,
+    width: 30,
+    borderRadius: 30 / 2,
     overflow: "hidden",
     backgroundColor: "rgba(0,122,255,0.1)",
     borderWidth: 1,

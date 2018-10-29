@@ -1,60 +1,49 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
+import React from "react";
+import { Platform } from "react-native";
+import {
+  createStackNavigator,
+  createBottomTabNavigator
+} from "react-navigation";
 
-import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import TabBarIcon from "../components/TabBarIcon";
+import MapScreen from "../screens/MapScreen";
+import GasListScreen from "../screens/GasListScreen";
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
+const MapStack = createStackNavigator({
+  Map: MapScreen
 });
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+MapStack.navigationOptions = {
+  tabBarLabel: "Kort",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
       name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
+        Platform.OS === "ios" ? `ios-map${focused ? "" : "-outline"}` : "md-map"
       }
     />
-  ),
+  )
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const GasListStack = createStackNavigator({
+  GasList: GasListScreen
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+GasListStack.navigationOptions = {
+  tabBarLabel: "Listi",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? `ios-link${focused ? '' : '-outline'}` : 'md-link'}
+      name={
+        Platform.OS === "ios"
+          ? `ios-list${focused ? "" : "-outline"}`
+          : "md-list"
+      }
     />
-  ),
-};
-
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
-});
-
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
-    />
-  ),
+  )
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  GasListStack,
+  MapStack
 });
