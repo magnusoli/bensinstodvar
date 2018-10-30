@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, View, Dimensions, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Dimensions,
+  ActivityIndicator,
+  Image
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 const { width, height } = Dimensions.get("window");
@@ -20,6 +26,16 @@ export default class MapScreen extends React.Component {
       },
       isLoading: true,
       isLoading2: true
+    };
+    this.images = {
+      N1: require("../myndir/n1.png"),
+      Dælan: require("../myndir/dælan.png"),
+      "Costco Iceland": require("../myndir/costcoiceland.png"),
+      Atlantsolía: require("../myndir/atlantsolía.png"),
+      ÓB: require("../myndir/ób.png"),
+      Olís: require("../myndir/olís.png"),
+      Orkan: require("../myndir/orkan.png"),
+      "Orkan X": require("../myndir/orkanx.png")
     };
   }
   componentDidMount() {
@@ -53,6 +69,7 @@ export default class MapScreen extends React.Component {
         console.error(error);
       });
   }
+
   render() {
     if (this.state.isLoading || this.state.isLoading2) {
       return (
@@ -72,7 +89,14 @@ export default class MapScreen extends React.Component {
                 longitude: marker.geo.lon
               }}
               title={marker.company + ", " + marker.name}
-            />
+            >
+              <View style={styles.img}>
+                <Image
+                  style={{ width: 20, height: 20 }}
+                  source={this.images[marker.company]}
+                />
+              </View>
+            </MapView.Marker>
           ))}
           <MapView.Marker
             coordinate={{
@@ -111,6 +135,14 @@ const styles = StyleSheet.create({
     borderColor: "white",
     overflow: "hidden",
     backgroundColor: "#007AFF"
+  },
+  img: {
+    height: 20,
+    width: 20,
+    borderRadius: 20 / 2,
+    borderWidth: 3,
+    backgroundColor: "#FF0000",
+    overflow: "hidden"
   },
 
   container: {

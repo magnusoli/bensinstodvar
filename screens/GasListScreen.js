@@ -15,7 +15,7 @@ export default class GasListScreen extends React.Component {
     super(props);
     this.state = {
       isLoading: true,
-      fuel: "disel"
+      fuel: "bensin"
     };
     this.images = {
       N1: require("../myndir/n1.png"),
@@ -51,7 +51,7 @@ export default class GasListScreen extends React.Component {
     );
   };
   displayFuel = item => {
-    if ((this.state.fuel = "bensin")) {
+    if (this.state.fuel == "bensin") {
       if (item.bensin95_discount != null) {
         return (
           <View>
@@ -68,25 +68,31 @@ export default class GasListScreen extends React.Component {
         </View>
       );
     }
-    if ((this.state.fuel = "disel")) {
-      if (item.disel_discount != null) {
+    if (this.state.fuel == "disel") {
+      if (item.diesel_discount != null) {
         return (
           <View>
-            <Text style={styles.price}>Dísel verð: {item.disel}</Text>
+            <Text style={styles.price}>Dísel verð: {item.diesel}</Text>
             <Text style={styles.discount}>
-              (með afslætti: {item.disel_discount})
+              (með afslætti: {item.diesel_discount})
             </Text>
           </View>
         );
       }
       return (
         <View>
-          <Text style={styles.price}>Dísel verð: {item.bensin95}</Text>
+          <Text style={styles.price}>Dísel verð: {item.diesel}</Text>
         </View>
       );
     }
   };
-  changeFuel;
+  changeFuel = check => {
+    if (check) {
+      this.setState({ fuel: "bensin" });
+    } else if (!check) {
+      this.setState({ fuel: "disel" });
+    }
+  };
   render() {
     if (this.state.isLoading) {
       return (
@@ -99,7 +105,9 @@ export default class GasListScreen extends React.Component {
     return (
       <View style={styles.container}>
         <FlatList
-          ListHeaderComponent={<SegmentButton />}
+          ListHeaderComponent={
+            <SegmentButton changeFuel={check => this.changeFuel(check)} />
+          }
           data={this.state.dataSource}
           renderItem={({ item }) => (
             <View style={styles.itemBox}>
@@ -181,7 +189,6 @@ const styles = StyleSheet.create({
   },
   distance: {
     paddingLeft: 5,
-
     fontSize: 11,
     textDecorationLine: "underline"
   }
