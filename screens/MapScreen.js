@@ -27,16 +27,15 @@ export default class MapScreen extends React.Component {
       isLoading: true,
       isLoading2: true
     };
-    this.images = {
-      N1: require("../myndir/n1.png"),
-      Dælan: require("../myndir/dælan.png"),
-      "Costco Iceland": require("../myndir/costcoiceland.png"),
-      Atlantsolía: require("../myndir/atlantsolía.png"),
-      ÓB: require("../myndir/ób.png"),
-      Olís: require("../myndir/olís.png"),
-      Orkan: require("../myndir/orkan.png"),
-      "Orkan X": require("../myndir/orkanx.png")
-    };
+    this.images = { 
+      N1: require("../myndir/n1.png"), 
+      Dælan: require("../myndir/dælan.png"), 
+      "Costco Iceland": require("../myndir/costcoiceland.png"), 
+      Atlantsolía: require("../myndir/atlantsolía.png"), 
+      ÓB: require("../myndir/ób.png"), 
+      Olís: require("../myndir/olís.png"), 
+      Orkan: require("../myndir/orkan.png"), 
+      "Orkan X": require("../myndir/orkanX.png") };
   }
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
@@ -78,8 +77,7 @@ export default class MapScreen extends React.Component {
         </View>
       );
     }
-    return (
-      <View style={styles.container}>
+    return <View style={styles.container}>
         <MapView style={styles.map} initialRegion={this.state.initialPosition}>
           {this.state.dataSource.map(marker => (
             <MapView.Marker
@@ -92,26 +90,19 @@ export default class MapScreen extends React.Component {
             >
               <View style={styles.img}>
                 <Image
-                  style={{ width: 20, height: 20 }}
+                  style={{ width: 24, height: 24 }}
                   source={this.images[marker.company]}
                 />
               </View>
             </MapView.Marker>
           ))}
-          <MapView.Marker
-            coordinate={{
-              latitude: this.state.initialPosition.latitude,
-              longitude: this.state.initialPosition.longitude
-            }}
-            title={"Your Location"}
-          >
+          <MapView.Marker coordinate={{ latitude: this.state.initialPosition.latitude, longitude: this.state.initialPosition.longitude }} title={"Your Location"}>
             <View style={styles.radius}>
               <View style={styles.marker} />
             </View>
           </MapView.Marker>
         </MapView>
-      </View>
-    );
+      </View>;
   }
 }
 
@@ -137,11 +128,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#007AFF"
   },
   img: {
-    height: 20,
-    width: 20,
+    height: 30,
+    width: 30,
     borderRadius: 20 / 2,
     borderWidth: 3,
-    backgroundColor: "#FF0000",
+    backgroundColor: "#FFFF",
     overflow: "hidden"
   },
 

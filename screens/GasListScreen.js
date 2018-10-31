@@ -25,7 +25,7 @@ export default class GasListScreen extends React.Component {
       ÓB: require("../myndir/ób.png"),
       Olís: require("../myndir/olís.png"),
       Orkan: require("../myndir/orkan.png"),
-      "Orkan X": require("../myndir/orkanx.png")
+      "Orkan X": require("../myndir/orkanX.png")
     };
   }
 
