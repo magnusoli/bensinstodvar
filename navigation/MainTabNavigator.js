@@ -14,6 +14,7 @@ const MapStack = createStackNavigator({
 });
 
 MapStack.navigationOptions = {
+  title: "Map",
   tabBarLabel: "Kort",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
@@ -30,6 +31,8 @@ const GasListStack = createStackNavigator({
 });
 
 GasListStack.navigationOptions = {
+  title: "List",
+
   tabBarLabel: "Listi",
   tabBarIcon: ({ focused }) => (
     <TabBarIcon

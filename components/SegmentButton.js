@@ -14,37 +14,31 @@ export default class Item extends React.Component {
   }
   onPressGas = () => {
     this.setState(
-      { gas: true, gasColor: "lightblue", diselColor: "white" },
-      function() {
-        console.log(this.state.gas);
-      }
+      { gasColor: "lightblue", diselColor: "white" },
+      function() {}
     );
     this.props.changeFuel(true);
   };
   onPressDisel = () => {
     this.setState(
-      { gas: false, gasColor: "white", diselColor: "lightblue" },
-      function() {
-        console.log(this.state.gas);
-      }
+      { gasColor: "white", diselColor: "lightblue" },
+      function() {}
     );
     this.props.changeFuel(false);
   };
   onPressShort = () => {
     this.setState(
-      { sort: true, shortColor: "grey", cheapColor: "white" },
-      function() {
-        console.log(this.state.sort);
-      }
+      { shortColor: "lightgreen", cheapColor: "white" },
+      function() {}
     );
+    this.props.changeSort(true);
   };
   onPressCheap = () => {
     this.setState(
-      { sort: false, shortColor: "white", cheapColor: "grey" },
-      function() {
-        console.log(this.state.sort);
-      }
+      { shortColor: "white", cheapColor: "lightgreen" },
+      function() {}
     );
+    this.props.changeSort(false);
   };
 
   render() {

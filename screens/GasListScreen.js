@@ -5,116 +5,140 @@ import {
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
   Image
 } from "react-native";
-import SegmentButton from "../components/SegmentButton";
+import { connect } from "react-redux";
 
-export default class GasListScreen extends React.Component {
+import SegmentButton from "../components/SegmentButton";
+import { updateData, updateLocation } from "../reduxStore";
+
+class GasListScreen extends React.Component {
+  static navigationOptions = () => {
+    return { title: "Listi" };
+  };
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
-      fuel: "bensin"
+      fuel: "bensin95",
+      sort: null
     };
     this.images = {
-      N1: require("../myndir/n1.png"),
-      Dælan: require("../myndir/dælan.png"),
-      "Costco Iceland": require("../myndir/costcoiceland.png"),
-      Atlantsolía: require("../myndir/atlantsolía.png"),
-      ÓB: require("../myndir/ób.png"),
-      Olís: require("../myndir/olís.png"),
-      Orkan: require("../myndir/orkan.png"),
-      "Orkan X": require("../myndir/orkanX.png")
+      N1: require("../listpictures/n1.png"),
+      Dælan: require("../listpictures/dælan.png"),
+      "Costco Iceland": require("../listpictures/costcoiceland.png"),
+      Atlantsolía: require("../listpictures/atlantsolía.png"),
+      ÓB: require("../listpictures/ób.png"),
+      Olís: require("../listpictures/olís.png"),
+      Orkan: require("../listpictures/orkan.png"),
+      "Orkan X": require("../listpictures/orkanX.png")
     };
   }
 
   componentDidMount() {
-    return fetch("http://apis.is/petrol")
-      .then(response => response.json())
-      .then(responseJson => {
-        this.setState(
-          {
-            isLoading: false,
-            dataSource: responseJson.results
-          },
-          function() {}
-        );
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    this.props.updateData();
+    this.props.updateLocation();
   }
   displayImage = name => {
     return (
       <Image style={{ width: 80, height: 70 }} source={this.images[name]} />
     );
   };
-  displayFuel = item => {
-    if (this.state.fuel == "bensin") {
-      if (item.bensin95_discount != null) {
-        return (
-          <View>
-            <Text style={styles.price}>Bensín verð: {item.bensin95}</Text>
-            <Text style={styles.discount}>
-              (með afslætti: {item.bensin95_discount})
-            </Text>
-          </View>
-        );
-      }
-      return (
-        <View>
-          <Text style={styles.price}>Bensín verð: {item.bensin95}</Text>
-        </View>
-      );
+  displaySort = data => {
+    if (this.state.sort == null) {
+      return data;
     }
-    if (this.state.fuel == "disel") {
-      if (item.diesel_discount != null) {
-        return (
-          <View>
-            <Text style={styles.price}>Dísel verð: {item.diesel}</Text>
-            <Text style={styles.discount}>
-              (með afslætti: {item.diesel_discount})
-            </Text>
-          </View>
-        );
-      }
-      return (
-        <View>
-          <Text style={styles.price}>Dísel verð: {item.diesel}</Text>
-        </View>
-      );
+    if (this.state.sort) {
+      return null;
+    } else {
+      return data.sort((a, b) => a[this.state.fuel] - b[this.state.fuel]);
     }
   };
+  displayFuel = item => {
+    return (
+      <View>
+        <Text style={styles.price}>
+          {this.state.fuel == "bensin95" ? "Bensín" : "Dísel"} verð:{" "}
+          {item[this.state.fuel]}
+        </Text>
+        {item[`${this.state.fuel}_discount`] == null ? null : (
+          <Text style={styles.discount}>
+            (með afslætti: {item[`${this.state.fuel}_discount`]})
+          </Text>
+        )}
+      </View>
+    );
+  };
+
   changeFuel = check => {
     if (check) {
-      this.setState({ fuel: "bensin" });
+      this.setState({ fuel: "bensin95" });
     } else if (!check) {
-      this.setState({ fuel: "disel" });
+      this.setState({ fuel: "diesel" });
+    }
+  };
+  changeSort = check => {
+    this.setState({ sort: check });
+  };
+  distanceCalculator = (lat1, lon1, lat2, lon2) => {
+    var radlat1 = (Math.PI * lat1) / 180;
+    var radlat2 = (Math.PI * lat2) / 180;
+    var theta = lon1 - lon2;
+    var radtheta = (Math.PI * theta) / 180;
+    var dist =
+      Math.sin(radlat1) * Math.sin(radlat2) +
+      Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+      dist = 1;
+    }
+    dist = Math.acos(dist);
+    dist = (dist * 180) / Math.PI;
+    dist = dist * 60 * 1.1515;
+    dist = (dist * 1.609344).toFixed(3);
+    if (dist < 1) {
+      return `${dist * 1000} m`;
+    } else {
+      return `${dist} km`;
     }
   };
   render() {
-    if (this.state.isLoading) {
+    const { fetching, error } = this.props;
+    if (fetching) {
       return (
         <View style={{ flex: 1, padding: 20 }}>
           <ActivityIndicator />
         </View>
       );
     }
-
+    if (error != undefined)
+      return (
+        <View style={styles.container}>
+          <Text>{error}</Text>
+        </View>
+      );
     return (
       <View style={styles.container}>
         <FlatList
           ListHeaderComponent={
-            <SegmentButton changeFuel={check => this.changeFuel(check)} />
+            <SegmentButton
+              changeFuel={check => this.changeFuel(check)}
+              changeSort={check => this.changeSort(check)}
+            />
           }
-          data={this.state.dataSource}
+          data={this.displaySort(this.props.data)}
           renderItem={({ item }) => (
             <View style={styles.itemBox}>
               {this.displayImage(item.company)}
               <View style={styles.dist}>
                 <Text style={styles.name}>{item.name}</Text>
-                <Text style={styles.distance}>distance: unknown</Text>
+                <Text style={styles.distance}>
+                  distance:{" "}
+                  {this.distanceCalculator(
+                    item.geo.lat,
+                    item.geo.lon,
+                    this.props.position.lat,
+                    this.props.position.lon
+                  )}
+                </Text>
               </View>
               <View style={styles.info}>
                 <Text style={styles.company}>{item.company}</Text>
@@ -193,3 +217,12 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline"
   }
 });
+
+const mapStateToProps = state => {
+  return { ...state };
+};
+
+export default connect(
+  mapStateToProps,
+  { updateData, updateLocation }
+)(GasListScreen);
