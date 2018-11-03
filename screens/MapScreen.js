@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Dimensions,
-  ActivityIndicator,
-  Image
-} from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { StyleSheet, View, Dimensions } from "react-native";
+import MapView from "react-native-maps";
 import { connect } from "react-redux";
 
 const { width, height } = Dimensions.get("window");
@@ -21,12 +15,11 @@ class MapScreen extends React.Component {
     super(props);
     this.state = {
       initialPosition: {
-        latitude: null,
-        longitude: null,
+        latitude: this.props.position.lat,
+        longitude: this.props.position.lon,
         latitudeDelta: LATTITUDE_DELTA,
         longitudeDelta: LONGTITUDE_DELTA
-      },
-      isLoading: true
+      }
     };
     this.images = {
       N1: require("../mappictures/n1.png"),
@@ -39,35 +32,12 @@ class MapScreen extends React.Component {
       "Orkan X": require("../mappictures/orkanX.png")
     };
   }
-  componentDidMount() {
-    this.setState({
-      initialPosition: {
-        latitude: this.props.position.lat,
-        longitude: this.props.position.lon,
-        latitudeDelta: LATTITUDE_DELTA,
-        longitudeDelta: LONGTITUDE_DELTA
-      },
-      isLoading: false
-    });
-  }
-  createImage = name => {
-    return (
-      <View style={styles.img}>
-        <Image style={{ width: 24, height: 24 }} source={this.images[name]} />
-      </View>
-    );
-  };
   render() {
-    if (this.state.isLoading) {
-      return (
-        <View style={{ flex: 1, padding: 20, alignContent: "center" }}>
-          <ActivityIndicator />
-        </View>
-      );
-    }
+    const { initialPosition } = this.state;
+
     return (
       <View style={styles.container}>
-        <MapView style={styles.map} initialRegion={this.state.initialPosition}>
+        <MapView style={styles.map} initialRegion={initialPosition}>
           {this.props.data.map(marker => (
             <MapView.Marker
               image={this.images[marker.company]}
@@ -82,8 +52,8 @@ class MapScreen extends React.Component {
           ))}
           <MapView.Marker
             coordinate={{
-              latitude: this.state.initialPosition.latitude,
-              longitude: this.state.initialPosition.longitude
+              latitude: initialPosition.latitude,
+              longitude: initialPosition.longitude
             }}
             title={"Your Location"}
             anchor={{ x: 0.5, y: 0.5 }}

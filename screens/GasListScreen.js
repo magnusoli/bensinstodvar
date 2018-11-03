@@ -33,7 +33,6 @@ class GasListScreen extends React.Component {
       "Orkan X": require("../listpictures/orkanX.png")
     };
   }
-
   componentDidMount() {
     this.props.updateData();
     this.props.updateLocation();
@@ -44,14 +43,23 @@ class GasListScreen extends React.Component {
     );
   };
   displaySort = data => {
-    if (this.state.sort == null) {
-      return data;
+    list = data.map(obj => {
+      return {
+        ...obj,
+        distance: this.distanceCalculator(
+          obj.geo.lat,
+          obj.geo.lon,
+          this.props.position.lat,
+          this.props.position.lon
+        )
+      };
+    });
+    if (this.state.sort == "distance") {
+      list.sort((a, b) => a.distance - b.distance);
+    } else if (this.state.sort == "price") {
+      list.sort((a, b) => a[this.state.fuel] - b[this.state.fuel]);
     }
-    if (this.state.sort) {
-      return null;
-    } else {
-      return data.sort((a, b) => a[this.state.fuel] - b[this.state.fuel]);
-    }
+    return list;
   };
   displayFuel = item => {
     return (
@@ -68,7 +76,6 @@ class GasListScreen extends React.Component {
       </View>
     );
   };
-
   changeFuel = check => {
     if (check) {
       this.setState({ fuel: "bensin95" });
@@ -77,7 +84,11 @@ class GasListScreen extends React.Component {
     }
   };
   changeSort = check => {
-    this.setState({ sort: check });
+    if (check) {
+      this.setState({ sort: "distance" });
+    } else if (!check) {
+      this.setState({ sort: "price" });
+    }
   };
   distanceCalculator = (lat1, lon1, lat2, lon2) => {
     var radlat1 = (Math.PI * lat1) / 180;
@@ -94,18 +105,15 @@ class GasListScreen extends React.Component {
     dist = (dist * 180) / Math.PI;
     dist = dist * 60 * 1.1515;
     dist = (dist * 1.609344).toFixed(3);
-    if (dist < 1) {
-      return `${dist * 1000} m`;
-    } else {
-      return `${dist} km`;
-    }
+    return dist;
   };
+
   render() {
     const { fetching, error } = this.props;
     if (fetching) {
       return (
         <View style={{ flex: 1, padding: 20 }}>
-          <ActivityIndicator />
+          <ActivityIndicator size={"large"} />
         </View>
       );
     }
@@ -132,12 +140,9 @@ class GasListScreen extends React.Component {
                 <Text style={styles.name}>{item.name}</Text>
                 <Text style={styles.distance}>
                   distance:{" "}
-                  {this.distanceCalculator(
-                    item.geo.lat,
-                    item.geo.lon,
-                    this.props.position.lat,
-                    this.props.position.lon
-                  )}
+                  {item.distance < 1
+                    ? `${item.distance * 1000} m`
+                    : `${item.distance} km`}
                 </Text>
               </View>
               <View style={styles.info}>
@@ -163,24 +168,6 @@ const styles = StyleSheet.create({
     borderColor: "#d6d7da",
     padding: 8,
     flexDirection: "row"
-  },
-  header: {
-    flex: 3,
-    flexDirection: "row",
-    justifyContent: "center",
-    height: 50
-  },
-  short: {
-    flex: 3,
-    backgroundColor: "powderblue"
-  },
-  best: {
-    flex: 3,
-    backgroundColor: "yellow"
-  },
-  cheap: {
-    flex: 3,
-    backgroundColor: "red"
   },
   company: {
     textAlign: "right",
@@ -209,7 +196,7 @@ const styles = StyleSheet.create({
   },
   dist: {
     flexDirection: "column",
-    width: 195
+    width: 188
   },
   distance: {
     paddingLeft: 5,

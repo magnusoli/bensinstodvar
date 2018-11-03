@@ -28,7 +28,11 @@ const reducer = (state = initialState, action) => {
     case TYPES.REQUESTING:
       return { ...state, error: undefined, fetching: true };
     case TYPES.SUCCESS:
-      return { ...state, data: action.payload.data, fetching: false };
+      return {
+        ...state,
+        data: action.payload.data,
+        fetching: false
+      };
     case TYPES.FAILURE:
       return {
         ...state,

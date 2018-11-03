@@ -1,10 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 
 export default class Item extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       gasColor: "lightblue",
       diselColor: "white",
@@ -13,32 +12,32 @@ export default class Item extends React.Component {
     };
   }
   onPressGas = () => {
+    this.props.changeFuel(true);
     this.setState(
       { gasColor: "lightblue", diselColor: "white" },
       function() {}
     );
-    this.props.changeFuel(true);
   };
   onPressDisel = () => {
+    this.props.changeFuel(false);
     this.setState(
       { gasColor: "white", diselColor: "lightblue" },
       function() {}
     );
-    this.props.changeFuel(false);
   };
   onPressShort = () => {
+    this.props.changeSort(true);
     this.setState(
       { shortColor: "lightgreen", cheapColor: "white" },
       function() {}
     );
-    this.props.changeSort(true);
   };
   onPressCheap = () => {
+    this.props.changeSort(false);
     this.setState(
       { shortColor: "white", cheapColor: "lightgreen" },
       function() {}
     );
-    this.props.changeSort(false);
   };
 
   render() {
@@ -96,7 +95,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
-
     flexDirection: "row",
     padding: 5
   },
