@@ -62,6 +62,8 @@ class GasListScreen extends React.Component {
     return list;
   };
   displayFuel = item => {
+    console.log(item.company);
+
     return (
       <View>
         <Text style={styles.price}>
@@ -72,6 +74,9 @@ class GasListScreen extends React.Component {
           <Text style={styles.discount}>
             (með afslætti: {item[`${this.state.fuel}_discount`]})
           </Text>
+        )}
+        {item.company !== "Costco Iceland" ? null : (
+          <Text style={styles.discount}>(Membership needed)</Text>
         )}
       </View>
     );
