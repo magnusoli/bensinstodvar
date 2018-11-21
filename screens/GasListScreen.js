@@ -62,8 +62,6 @@ class GasListScreen extends React.Component {
     return list;
   };
   displayFuel = item => {
-    console.log(item.company);
-
     return (
       <View>
         <Text style={styles.price}>
