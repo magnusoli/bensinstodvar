@@ -9,7 +9,7 @@ const LATTITUDE_DELTA = 0.08;
 const LONGTITUDE_DELTA = LATTITUDE_DELTA * ASPECT_RATIO;
 class MapScreen extends React.Component {
   static navigationOptions = () => {
-    return { title: "Kort" };
+    return { title: "Bensínstöðvar App" };
   };
   constructor(props) {
     super(props);

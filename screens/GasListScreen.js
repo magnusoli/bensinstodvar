@@ -14,7 +14,7 @@ import { updateData, updateLocation } from "../reduxStore";
 
 class GasListScreen extends React.Component {
   static navigationOptions = () => {
-    return { title: "Listi" };
+    return { title: "Bensínstöðvar App" };
   };
   constructor(props) {
     super(props);
